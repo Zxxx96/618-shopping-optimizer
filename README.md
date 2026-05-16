@@ -1,5 +1,10 @@
 # 🛒 618 Shopping Optimizer (618 购物凑单助手)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/平台-淘宝%2F京东%2F拼多多%2F抖音-orange)](#)
+[![Skill](https://img.shields.io/badge/Claude%20Code-Skill-red)](#)
+[![Hermes](https://img.shields.io/badge/Hermes-Agent-purple)](#)
+
 > AI-powered shopping optimizer for Chinese e-commerce mega-sales (618, Double 11, Double 12).
 > Know what you want to buy? Let AI crunch the numbers and find the optimal combination to maximize your discounts.
 
