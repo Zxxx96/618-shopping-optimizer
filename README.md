@@ -11,13 +11,16 @@
 
 During China's mega shopping festivals (618 in June, Singles' Day 11/11), platforms like Taobao, JD.com, Pinduoduo, and Douyin run complex tiered-discount promotions (e.g., "every ¥300 you spend, save ¥50"). Manually splitting your cart into optimal orders is tedious and error-prone. This tool does it for you.
 
-### Three core scenarios
+### Core scenarios
 
 | Scenario | What it does |
 |----------|-------------|
 | **Gap-filling** (补差凑单) | You're ¥11 short of the next ¥300 threshold. Should you add a filler item? The tool calculates exactly how much the filler actually costs you after the extra discount. |
 | **Order splitting** (分单优化) | You have 8 items across one platform. What's the optimal way to split them into separate orders to hit exactly the right thresholds? |
 | **Cross-store stacking** (跨店满减) | Items spread across different stores on the same platform. How do you stack cross-store discounts + store-specific coupons for maximum savings? |
+| **Deposit expansion** (定金膨胀) | Pre-sale items with deposit multiplier (e.g., ¥50 deposit counts as ¥100). Calculate the real savings after expansion. |
+| **Category coupons** (品类券) | Platform coupons limited to specific categories. Handles parallel vs. sequential stacking with cross-store discounts. |
+| **Filler refund** (凑单退款) | Calculate actual refund amount after adding filler items to hit a threshold. Includes risk warnings. |
 
 ### Platform support
 
@@ -142,6 +145,10 @@ STEP 3: Output 2-3 optimal plans with comparison
 - ⚙️ Configurable API endpoint (settings modal)
 - 🔄 Auto connection check on load
 - 👆 No dependencies — pure HTML/CSS/JavaScript
+- 🧮 **Local calculation engine** — works offline, no API needed
+- ➕ **Structured product input** — form-based item entry with price/qty/store
+- 💾 **Conversation persistence** — chat history saved to localStorage
+- 🏷️ **Plan cards** — structured result display with comparison tables
 
 ---
 
@@ -175,6 +182,8 @@ platforms:
 2. **Search engines may timeout behind firewalls.** Give up after 30s and use fallback rules.
 3. **Hermes browser module needs `chromium` channel on macOS**, not `chrome`. Also needs Node.js in PATH (nvm users: add to `config.yaml` env.PATH).
 4. **Gateway API is auto-started** via `config.yaml` config — no `--platform` flag needed.
+5. **Port auto-increment.** `serve.sh` now automatically finds an available port if 8080 is occupied — no manual intervention needed.
+6. **Verify fallback rules annually.** 618 rules are based on the previous year. If running before rules are officially announced (usually late May), check the `rule_year` field in output.
 
 ---
 

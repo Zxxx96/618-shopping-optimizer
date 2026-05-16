@@ -6,7 +6,7 @@
 <title>618 购物助手</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  
+
   :root {
     --red: #e4393c;
     --red-dark: #c1272d;
@@ -18,6 +18,8 @@
     --bubble-user: #e4393c;
     --bubble-ai: #fff;
     --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --green: #4caf50;
+    --orange: #ff9800;
   }
 
   body {
@@ -40,16 +42,8 @@
     z-index: 10;
     box-shadow: 0 2px 8px rgba(228,57,60,0.3);
   }
-  .header h1 {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-  .header .subtitle {
-    font-size: 12px;
-    opacity: 0.85;
-    margin-top: 2px;
-  }
+  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .header .subtitle { font-size: 12px; opacity: 0.85; margin-top: 2px; }
   .header .badge {
     display: inline-block;
     background: var(--gold);
@@ -60,6 +54,27 @@
     margin-left: 6px;
     font-weight: 600;
     vertical-align: middle;
+  }
+  .header-actions {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+  }
+  .header-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Status bar */
@@ -73,14 +88,10 @@
     border-bottom: 1px solid #eee;
     gap: 6px;
   }
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #4caf50;
-  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
   .status.offline .status-dot { background: #ccc; }
-  .status.offline .status-text::after { content: " 未连接"; }
+  .status.offline .status-text::after { content: " 未连接（本地计算可用）"; }
+  .status.online .status-text::after { content: " 已连接"; }
 
   /* Chat area */
   .chat {
@@ -106,7 +117,6 @@
   .welcome p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
   .welcome .hint { font-size: 12px; color: var(--red); margin-top: 10px; font-weight: 500; }
 
-  /* Quick examples */
   .quick-actions {
     display: flex;
     flex-wrap: wrap;
@@ -125,11 +135,7 @@
     transition: all 0.2s;
     white-space: nowrap;
   }
-  .quick-btn:active {
-    background: var(--red);
-    color: #fff;
-    transform: scale(0.96);
-  }
+  .quick-btn:active { background: var(--red); color: #fff; transform: scale(0.96); }
 
   /* Message bubbles */
   .msg {
@@ -142,7 +148,7 @@
     animation: fadeIn 0.3s ease;
   }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  
+
   .msg.user {
     align-self: flex-end;
     background: var(--bubble-user);
@@ -165,6 +171,83 @@
     margin-bottom: 4px;
   }
   .msg.user .label { color: rgba(255,255,255,0.7); }
+
+  /* Product cards in chat */
+  .product-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0;
+  }
+  .product-card {
+    background: #fff5f5;
+    border: 1px solid #ffcccc;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    position: relative;
+    min-width: 120px;
+  }
+  .product-card .pc-name { font-weight: 600; color: var(--text); }
+  .product-card .pc-price { color: var(--red); font-weight: 700; margin-top: 2px; }
+  .product-card .pc-meta { color: var(--text-secondary); font-size: 11px; margin-top: 2px; }
+  .product-card .pc-remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* Plan result cards */
+  .plan-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+    font-size: 13px;
+  }
+  .plan-card.best { border-color: var(--gold); border-width: 2px; }
+  .plan-card .plan-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .plan-card .plan-badge {
+    background: var(--gold);
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .plan-card table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .plan-card th, .plan-card td {
+    padding: 4px 6px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .plan-card th { color: var(--text-secondary); font-weight: 500; }
+  .plan-card .total-row td { font-weight: 700; border-top: 2px solid #eee; }
+  .plan-card .saved { color: var(--red); font-weight: 700; }
 
   /* Input area */
   .input-area {
@@ -207,6 +290,28 @@
   .input-area button:active { transform: scale(0.9); }
   .input-area button:disabled { background: #ccc; }
 
+  /* Floating action button */
+  .fab {
+    position: fixed;
+    bottom: 80px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(245,166,35,0.4);
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+  }
+  .fab:active { transform: scale(0.9); }
+
   /* Loading dots */
   .loading {
     align-self: flex-start;
@@ -245,25 +350,6 @@
   }
   @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
 
-  /* Settings button */
-  .settings-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: #fff;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   /* Modal */
   .modal-overlay {
     display: none;
@@ -271,84 +357,249 @@
     inset: 0;
     background: rgba(0,0,0,0.4);
     z-index: 50;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
   }
   .modal-overlay.active { display: flex; }
   .modal {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 16px 16px 0 0;
     padding: 20px;
-    width: 90%;
-    max-width: 360px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.15);
+    animation: slideUp 0.3s ease;
   }
-  .modal h3 { font-size: 16px; margin-bottom: 12px; }
-  .modal label { font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-  .modal input {
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .modal h3 { font-size: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .modal .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary); }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label { font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  .form-group input, .form-group select {
     width: 100%;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 8px 12px;
+    padding: 10px 12px;
     font-size: 14px;
-    margin-bottom: 12px;
     outline: none;
+    font-family: inherit;
   }
-  .modal input:focus { border-color: var(--red); }
-  .modal button {
-    width: 100%;
+  .form-group input:focus, .form-group select:focus { border-color: var(--red); }
+
+  .form-row { display: flex; gap: 10px; }
+  .form-row .form-group { flex: 1; }
+
+  /* Added items list in modal */
+  .added-items { margin: 16px 0; }
+  .added-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .added-item .item-info { flex: 1; }
+  .added-item .item-name { font-weight: 600; }
+  .added-item .item-detail { color: var(--text-secondary); font-size: 12px; }
+  .added-item .item-remove {
+    background: none;
+    border: none;
+    color: var(--red);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .added-empty { text-align: center; color: var(--text-secondary); font-size: 13px; padding: 20px; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .modal-actions .btn-add {
+    flex: 1;
     background: var(--red);
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 10px;
+    padding: 12px;
     font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+  }
+  .modal-actions .btn-calc {
+    flex: 1;
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .modal-actions button:disabled { background: #ccc; }
+
+  .tab-bar {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 16px;
+  }
+  .tab-bar button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .tab-bar button.active { color: var(--red); border-bottom-color: var(--red); }
+
+  .rule-selector { margin: 12px 0; }
+  .rule-selector label { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; display: block; }
+  .rule-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rule-chip {
+    padding: 6px 12px;
+    border-radius: 16px;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.2s;
+  }
+  .rule-chip.active { background: var(--red); color: #fff; border-color: var(--red); }
+
+  .calc-note {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 8px;
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🎯 618 购物助手 <span class="badge">AI</span></h1>
+  <h1>618 购物助手 <span class="badge">AI</span></h1>
   <div class="subtitle">智能凑单 · 最优省钱</div>
-  <button class="settings-btn" onclick="toggleSettings()">⚙</button>
-</div>
-
-<div class="status" id="status">
-  <span class="status-dot"></span>
-  <span class="status-text">已连接</span>
-</div>
-
-<div class="chat" id="chat">
-  <div class="welcome">
-    <div class="icon">🛒</div>
-    <h2>618 智能购物助手</h2>
-    <p>告诉我你想买什么，我帮你算出最优凑单方案。<br>支持京东、淘宝、拼多多、抖音平台规则。</p>
-    <p class="hint">👇 或者试试这些 →</p>
-    <div class="quick-actions">
-      <button class="quick-btn" onclick="quickSend('我想在淘宝买键盘、鼠标和显示器，预算2000，帮我搭配最优方案')">淘宝数码凑单</button>
-      <button class="quick-btn" onclick="quickSend('京东618满减规则是什么？')">查京东规则</button>
-      <button class="quick-btn" onclick="quickSend('我有三件东西要买：耳机498、键盘899、鼠标299，淘宝跨店满减怎么拆单最省钱？')">跨店拆单计算</button>
-    </div>
+  <div class="header-actions">
+    <button class="header-btn" onclick="clearHistory()" title="清除历史">🗑</button>
+    <button class="header-btn" onclick="toggleSettings()" title="设置">⚙</button>
   </div>
 </div>
+
+<div class="status online" id="status">
+  <span class="status-dot"></span>
+  <span class="status-text"></span>
+</div>
+
+<div class="chat" id="chat"></div>
 
 <div class="input-area">
   <textarea id="input" rows="1" placeholder="输入你想买的商品和价格..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send();}"></textarea>
   <button onclick="send()" id="sendBtn">➤</button>
 </div>
 
-<div class="modal-overlay" id="settingsModal">
+<button class="fab" onclick="openAddModal()" title="添加商品">+</button>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal" onclick="if(event.target===this)toggleSettings()">
   <div class="modal">
-    <h3>连接设置</h3>
-    <label>API 服务器地址</label>
-    <input id="apiHost" placeholder="192.168.x.x:8642">
-    <button onclick="saveSettings()">保存</button>
+    <h3>连接设置 <button class="close-btn" onclick="toggleSettings()">✕</button></h3>
+    <div class="form-group">
+      <label>API 服务器地址</label>
+      <input id="apiHost" placeholder="192.168.x.x:8642">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-add" onclick="saveSettings()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <h3>添加商品 <button class="close-btn" onclick="closeAddModal()">✕</button></h3>
+
+    <div class="tab-bar">
+      <button class="active" onclick="switchTab('form')">手动添加</button>
+      <button onclick="switchTab('list')">已添加 (<span id="itemCount">0</span>)</button>
+    </div>
+
+    <div id="tabForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>商品名称</label>
+          <input id="itemName" placeholder="如：键盘">
+        </div>
+        <div class="form-group">
+          <label>单价 (¥)</label>
+          <input id="itemPrice" type="number" inputmode="decimal" placeholder="499">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>数量</label>
+          <input id="itemQty" type="number" inputmode="numeric" value="1" min="1">
+        </div>
+        <div class="form-group">
+          <label>平台</label>
+          <select id="itemPlatform">
+            <option value="taobao">淘宝/天猫</option>
+            <option value="jd">京东</option>
+            <option value="pdd">拼多多</option>
+            <option value="douyin">抖音</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>店铺（跨店场景填）</label>
+        <input id="itemStore" placeholder="如：旗舰店">
+      </div>
+
+      <div class="rule-selector">
+        <label>满减规则</label>
+        <div class="rule-chips">
+          <div class="rule-chip active" data-rule="300-50" onclick="selectRule(this)">每满300-50</div>
+          <div class="rule-chip" data-rule="200-30" onclick="selectRule(this)">每满200-30</div>
+          <div class="rule-chip" data-rule="500-80" onclick="selectRule(this)">每满500-80</div>
+          <div class="rule-chip" data-rule="custom" onclick="selectRule(this)">自定义</div>
+        </div>
+      </div>
+      <div class="form-group" id="customRuleGroup" style="display:none">
+        <label>自定义规则（如 350-60）</label>
+        <input id="customRule" placeholder="门槛-优惠">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-add" onclick="addItem()">+ 添加商品</button>
+        <button class="btn-calc" id="calcBtn" onclick="runLocalCalc()" disabled>开始计算</button>
+      </div>
+      <div class="calc-note">本地计算，无需联网</div>
+    </div>
+
+    <div id="tabList" style="display:none">
+      <div class="added-items" id="addedItems">
+        <div class="added-empty">还没有添加商品</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-add" onclick="clearItems()">清空</button>
+        <button class="btn-calc" id="calcBtn2" onclick="runLocalCalc()" disabled>开始计算</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
+// ============ State ============
 const DEFAULT_HOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'localhost:8642'
   : window.location.hostname + ':8642';
@@ -356,6 +607,10 @@ const DEFAULT_HOST = window.location.hostname === 'localhost' || window.location
 let API_BASE = localStorage.getItem('618_api_host') || DEFAULT_HOST;
 let isStreaming = false;
 let streamBuffer = '';
+let items = []; // structured product list
+let selectedRule = '300-50';
+const HISTORY_KEY = '618_chat_history';
+const ITEMS_KEY = '618_items';
 
 const chat = document.getElementById('chat');
 const input = document.getElementById('input');
@@ -365,27 +620,416 @@ const apiHostInput = document.getElementById('apiHost');
 
 apiHostInput.value = API_BASE;
 
-function toggleSettings() {
-  document.getElementById('settingsModal').classList.toggle('active');
+// ============ Persistence ============
+function saveHistory() {
+  const msgs = [];
+  chat.querySelectorAll('.msg').forEach(el => {
+    const role = el.classList.contains('user') ? 'user' : 'ai';
+    // Skip welcome card, only save messages
+    if (el.querySelector('.label')) {
+      msgs.push({ role, html: el.innerHTML, ts: Date.now() });
+    }
+  });
+  // Keep last 50 messages
+  const trimmed = msgs.slice(-50);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(trimmed));
 }
 
-function saveSettings() {
-  API_BASE = apiHostInput.value.trim() || DEFAULT_HOST;
-  localStorage.setItem('618_api_host', API_BASE);
-  document.getElementById('settingsModal').classList.remove('active');
-  checkConnection();
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) { showWelcome(); return; }
+    const msgs = JSON.parse(raw);
+    if (!msgs.length) { showWelcome(); return; }
+    msgs.forEach(m => {
+      const div = document.createElement('div');
+      div.className = `msg ${m.role}`;
+      div.innerHTML = m.html;
+      chat.appendChild(div);
+    });
+    chat.scrollTop = chat.scrollHeight;
+  } catch { showWelcome(); }
 }
 
+function clearHistory() {
+  if (!confirm('清除所有对话记录？')) return;
+  localStorage.removeItem(HISTORY_KEY);
+  chat.innerHTML = '';
+  showWelcome();
+  toast('已清除');
+}
+
+function showWelcome() {
+  chat.innerHTML = `
+    <div class="welcome">
+      <div class="icon">🛒</div>
+      <h2>618 智能购物助手</h2>
+      <p>告诉我你想买什么，我帮你算出最优凑单方案。<br>支持京东、淘宝、拼多多、抖音平台规则。</p>
+      <p class="hint">👇 添加商品开始计算，或直接输入 →</p>
+      <div class="quick-actions">
+        <button class="quick-btn" onclick="quickSend('我想在淘宝买键盘499、鼠标299、显示器1399，帮我算最优方案')">淘宝数码凑单</button>
+        <button class="quick-btn" onclick="quickSend('京东618满减规则是什么？')">查京东规则</button>
+        <button class="quick-btn" onclick="quickSend('耳机498、键盘899、鼠标299，淘宝跨店满减怎么拆单最省钱？')">跨店拆单</button>
+      </div>
+    </div>`;
+}
+
+// ============ Items (structured input) ============
+function loadItems() {
+  try {
+    const raw = localStorage.getItem(ITEMS_KEY);
+    if (raw) items = JSON.parse(raw);
+  } catch {}
+}
+
+function saveItems() {
+  localStorage.setItem(ITEMS_KEY, JSON.stringify(items));
+  updateItemCount();
+}
+
+function updateItemCount() {
+  document.getElementById('itemCount').textContent = items.length;
+  const hasItems = items.length > 0;
+  document.getElementById('calcBtn').disabled = !hasItems;
+  document.getElementById('calcBtn2').disabled = !hasItems;
+}
+
+function addItem() {
+  const name = document.getElementById('itemName').value.trim();
+  const price = parseFloat(document.getElementById('itemPrice').value);
+  const qty = parseInt(document.getElementById('itemQty').value) || 1;
+  const platform = document.getElementById('itemPlatform').value;
+  const store = document.getElementById('itemStore').value.trim();
+
+  if (!name) { toast('请输入商品名称'); return; }
+  if (!price || price <= 0) { toast('请输入有效价格'); return; }
+
+  items.push({ name, price, quantity: qty, platform, store });
+  saveItems();
+  renderAddedItems();
+
+  // Clear form
+  document.getElementById('itemName').value = '';
+  document.getElementById('itemPrice').value = '';
+  document.getElementById('itemQty').value = '1';
+  document.getElementById('itemStore').value = '';
+
+  toast(`已添加: ${name} ¥${price}`);
+  document.getElementById('itemName').focus();
+}
+
+function removeItem(idx) {
+  items.splice(idx, 1);
+  saveItems();
+  renderAddedItems();
+}
+
+function clearItems() {
+  if (!items.length) return;
+  if (!confirm('清空所有商品？')) return;
+  items = [];
+  saveItems();
+  renderAddedItems();
+}
+
+function renderAddedItems() {
+  const container = document.getElementById('addedItems');
+  if (!items.length) {
+    container.innerHTML = '<div class="added-empty">还没有添加商品</div>';
+    return;
+  }
+  const platformNames = { taobao: '淘宝', jd: '京东', pdd: '拼多多', douyin: '抖音' };
+  container.innerHTML = items.map((it, i) => `
+    <div class="added-item">
+      <div class="item-info">
+        <div class="item-name">${escapeHtml(it.name)}</div>
+        <div class="item-detail">¥${it.price} × ${it.quantity} | ${platformNames[it.platform] || it.platform}${it.store ? ' · ' + escapeHtml(it.store) : ''}</div>
+      </div>
+      <button class="item-remove" onclick="removeItem(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+// ============ Rule selector ============
+function selectRule(el) {
+  document.querySelectorAll('.rule-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedRule = el.dataset.rule;
+  document.getElementById('customRuleGroup').style.display =
+    selectedRule === 'custom' ? '' : 'none';
+}
+
+function getRuleValues() {
+  if (selectedRule === 'custom') {
+    const raw = document.getElementById('customRule').value.trim();
+    const parts = raw.split(/[-—]/);
+    if (parts.length === 2) {
+      return { threshold: parseInt(parts[0]), discount: parseInt(parts[1]) };
+    }
+    return { threshold: 300, discount: 50 };
+  }
+  const [t, d] = selectedRule.split('-').map(Number);
+  return { threshold: t, discount: d };
+}
+
+// ============ Local Calculation Engine ============
+function runLocalCalc() {
+  if (!items.length) return;
+
+  const rule = getRuleValues();
+  const platform = items[0].platform;
+  const platformNames = { taobao: '淘宝/天猫', jd: '京东', pdd: '拼多多', douyin: '抖音' };
+
+  // Check if items span multiple stores
+  const stores = new Set(items.map(i => i.store).filter(Boolean));
+  const hasMultipleStores = stores.size > 1;
+
+  let plans = [];
+
+  // 1. Single order (baseline)
+  const total = items.reduce((s, i) => s + i.price * i.quantity, 0);
+  const singleDiscount = Math.floor(total / rule.threshold) * rule.discount;
+  plans.push({
+    name: '方案一：合并下单',
+    orders: [{
+      items: items.map(i => `${i.name} ¥${i.price}${i.quantity > 1 ? ' ×' + i.quantity : ''}`),
+      subtotal: total,
+      discount: singleDiscount,
+      final: total - singleDiscount
+    }],
+    totalSaved: singleDiscount,
+    totalPaid: total - singleDiscount,
+    summary: `总价 ¥${total}，满减 ${Math.floor(total / rule.threshold)} 次`
+  });
+
+  // 2. Order splitting (if enough items)
+  if (items.length >= 2) {
+    const splitPlan = optimizeSplit(items, rule);
+    if (splitPlan && splitPlan.totalSaved > singleDiscount) {
+      plans.push(splitPlan);
+    }
+  }
+
+  // 3. Gap filling (if close to next threshold)
+  const remainder = total % rule.threshold;
+  if (remainder > 0 && remainder <= rule.threshold * 0.4) {
+    const fillerTarget = rule.threshold - remainder;
+    const effectiveCost = fillerTarget - rule.discount;
+    if (effectiveCost >= 0) {
+      plans.push({
+        name: `方案${plans.length + 1}：凑单 ¥${fillerTarget}`,
+        orders: [{
+          items: [...items.map(i => `${i.name} ¥${i.price}${i.quantity > 1 ? ' ×' + i.quantity : ''}`), `凑单品 ¥${fillerTarget}`],
+          subtotal: total + fillerTarget,
+          discount: Math.floor((total + fillerTarget) / rule.threshold) * rule.discount,
+          final: total + fillerTarget - Math.floor((total + fillerTarget) / rule.threshold) * rule.discount
+        }],
+        totalSaved: Math.floor((total + fillerTarget) / rule.threshold) * rule.discount,
+        totalPaid: total + effectiveCost,
+        summary: `多花 ¥${effectiveCost} 实际获得一件凑单品，${effectiveCost <= 0 ? '不花钱反而省了！' : '相当于 ' + ((1 - effectiveCost / fillerTarget) * 100).toFixed(0) + '% 折扣买凑单品'}`
+      });
+    } else {
+      plans.push({
+        name: `方案${plans.length + 1}：凑单 ¥${fillerTarget}（强烈推荐）`,
+        orders: [{
+          items: [...items.map(i => `${i.name} ¥${i.price}${i.quantity > 1 ? ' ×' + i.quantity : ''}`), `凑单品 ¥${fillerTarget}`],
+          subtotal: total + fillerTarget,
+          discount: Math.floor((total + fillerTarget) / rule.threshold) * rule.discount,
+          final: total + fillerTarget - Math.floor((total + fillerTarget) / rule.threshold) * rule.discount
+        }],
+        totalSaved: Math.floor((total + fillerTarget) / rule.threshold) * rule.discount,
+        totalPaid: total - Math.abs(effectiveCost),
+        summary: `凑单反而省了 ¥${Math.abs(effectiveCost)}，强烈推荐！`
+      });
+    }
+  }
+
+  // Render results
+  const bestIdx = plans.reduce((bi, p, i) => p.totalSaved > plans[bi].totalSaved ? i : bi, 0);
+
+  let html = `<div class="label">购物助手（本地计算）</div>`;
+  html += `📊 ${platformNames[platform] || '未知平台'} | 每满 ¥${rule.threshold} 减 ¥${rule.discount}\n`;
+  html += `商品 ${items.length} 件，总价 ¥${total}\n\n`;
+
+  plans.forEach((p, i) => {
+    const isBest = i === bestIdx;
+    html += `<div class="plan-card${isBest ? ' best' : ''}">`;
+    html += `<div class="plan-title">${escapeHtml(p.name)}${isBest ? ' <span class="plan-badge">推荐</span>' : ''}</div>`;
+    html += `<table><thead><tr><th>订单</th><th>小计</th><th>满减</th><th>实付</th></tr></thead><tbody>`;
+    p.orders.forEach((o, oi) => {
+      html += `<tr><td>${o.items.map(escapeHtml).join('<br>')}</td><td>¥${o.subtotal}</td><td class="saved">-¥${o.discount}</td><td>¥${o.final}</td></tr>`;
+    });
+    html += `<tr class="total-row"><td>合计</td><td></td><td class="saved">省 ¥${p.totalSaved}</td><td>¥${p.totalPaid}</td></tr>`;
+    html += `</tbody></table>`;
+    html += `<div style="margin-top:6px;font-size:12px;color:var(--text-secondary)">${escapeHtml(p.summary)}</div>`;
+    html += `</div>`;
+  });
+
+  // Also generate JSON for consistency
+  const jsonResult = {
+    result: {
+      scenario: hasMultipleStores ? 'cross_store' : (plans.length > 1 ? 'order_splitting' : 'gap_filling'),
+      platform,
+      rule_used: `每满${rule.threshold}减${rule.discount}`,
+      rule_year: 2025,
+      rule_source: 'fallback',
+      items: items.map(i => ({ name: i.name, price: i.price, quantity: i.quantity, store: i.store })),
+      plans: plans.map(p => ({
+        name: p.name,
+        orders: p.orders.map((o, oi) => ({
+          order_id: oi + 1,
+          items: o.items,
+          subtotal: o.subtotal,
+          full_reduction: o.discount,
+          category_coupon: 0,
+          store_coupon: 0,
+          member_discount: 0,
+          final_payment: o.final
+        })),
+        total_saved: p.totalSaved,
+        total_paid: p.totalPaid,
+        summary: p.summary
+      })),
+      recommendation: `推荐「${plans[bestIdx].name}」，节省 ¥${plans[bestIdx].totalSaved}`,
+      warnings: []
+    }
+  };
+
+  html += `\n<details style="margin-top:8px"><summary style="font-size:12px;color:var(--text-secondary);cursor:pointer">查看 JSON</summary>`;
+  html += `<pre style="font-size:11px;background:#f5f5f5;padding:8px;border-radius:6px;overflow-x:auto;margin-top:4px">${escapeHtml(JSON.stringify(jsonResult, null, 2))}</pre></details>`;
+
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.innerHTML = html;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  saveHistory();
+
+  // Also show user what was calculated
+  const userMsg = `计算：${items.map(i => `${i.name}¥${i.price}${i.quantity > 1 ? '×' + i.quantity : ''}`).join('、')}（${platformNames[platform]}，每满${rule.threshold}减${rule.discount}）`;
+  const userDiv = document.createElement('div');
+  userDiv.className = 'msg user';
+  userDiv.innerHTML = `<div class="label">你</div>${escapeHtml(userMsg)}`;
+  chat.insertBefore(userDiv, div);
+  saveHistory();
+
+  closeAddModal();
+}
+
+function optimizeSplit(items, rule) {
+  const M = rule.threshold;
+  const D = rule.discount;
+
+  if (items.length > 10) {
+    return greedySplit(items, M, D);
+  }
+
+  // Exhaustive search for 2-3 splits
+  let bestPlan = null;
+  let bestSaved = 0;
+
+  // Try 2-way splits
+  for (let mask = 1; mask < (1 << items.length) - 1; mask++) {
+    const groupA = [], groupB = [];
+    items.forEach((item, i) => {
+      if (mask & (1 << i)) groupA.push(item);
+      else groupB.push(item);
+    });
+    const saved = calcSplitSaving([groupA, groupB], M, D);
+    if (saved > bestSaved) {
+      bestSaved = saved;
+      bestPlan = formatSplitPlan([groupA, groupB], M, D);
+    }
+  }
+
+  // Try 3-way splits if items >= 3
+  if (items.length >= 3) {
+    for (let mask1 = 1; mask1 < (1 << items.length) - 2; mask1++) {
+      const remaining = ((1 << items.length) - 1) ^ mask1;
+      for (let mask2 = 1; mask2 < remaining; mask2++) {
+        if ((mask2 & ~remaining) !== 0) continue;
+        const mask3 = remaining ^ mask2;
+        if (mask3 === 0) continue;
+
+        const groups = [[], [], []];
+        items.forEach((item, i) => {
+          if (mask1 & (1 << i)) groups[0].push(item);
+          else if (mask2 & (1 << i)) groups[1].push(item);
+          else groups[2].push(item);
+        });
+        const saved = calcSplitSaving(groups, M, D);
+        if (saved > bestSaved) {
+          bestSaved = saved;
+          bestPlan = formatSplitPlan(groups, M, D);
+        }
+      }
+    }
+  }
+
+  return bestPlan;
+}
+
+function greedySplit(items, M, D) {
+  // Sort by price descending
+  const sorted = [...items].sort((a, b) => b.price - a.price);
+  const groups = [[]];
+  let currentGroup = 0;
+  let currentTotal = 0;
+
+  for (const item of sorted) {
+    const itemTotal = item.price * item.quantity;
+    if (currentTotal + itemTotal > M * 1.5 && groups.length < 3) {
+      groups.push([]);
+      currentGroup = groups.length - 1;
+      currentTotal = 0;
+    }
+    groups[currentGroup].push(item);
+    currentTotal += itemTotal;
+  }
+
+  return formatSplitPlan(groups, M, D);
+}
+
+function calcSplitSaving(groups, M, D) {
+  return groups.reduce((s, g) => {
+    const total = g.reduce((t, i) => t + i.price * i.quantity, 0);
+    return s + Math.floor(total / M) * D;
+  }, 0);
+}
+
+function formatSplitPlan(groups, M, D) {
+  const orders = groups.filter(g => g.length).map((g, i) => {
+    const subtotal = g.reduce((t, it) => t + it.price * it.quantity, 0);
+    const discount = Math.floor(subtotal / M) * D;
+    return {
+      items: g.map(it => `${it.name} ¥${it.price}${it.quantity > 1 ? ' ×' + it.quantity : ''}`),
+      subtotal,
+      discount,
+      final: subtotal - discount
+    };
+  });
+
+  const totalSaved = orders.reduce((s, o) => s + o.discount, 0);
+  const totalPaid = orders.reduce((s, o) => s + o.final, 0);
+
+  return {
+    name: `方案${2}：拆成 ${orders.length} 单`,
+    orders,
+    totalSaved,
+    totalPaid,
+    summary: `拆成 ${orders.length} 个订单，每单尽量凑满 ${M} 的倍数`
+  };
+}
+
+// ============ API Communication ============
 async function checkConnection() {
   try {
     const res = await fetch(`http://${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
     if (res.ok) {
-      status.className = 'status';
-      status.querySelector('.status-text').textContent = '已连接';
+      status.className = 'status online';
     }
   } catch {
     status.className = 'status offline';
-    status.querySelector('.status-text').textContent = '未连接';
   }
 }
 
@@ -402,6 +1046,7 @@ function addMessage(role, text, streaming = false) {
   div.innerHTML = `<div class="label">${label}</div>${escapeHtml(text)}`;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
+  saveHistory();
   return div;
 }
 
@@ -421,7 +1066,7 @@ function removeLoading() {
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
 
 function toast(msg) {
@@ -435,13 +1080,31 @@ function toast(msg) {
 async function send() {
   const text = input.value.trim();
   if (!text || isStreaming) return;
-  
+
   input.value = '';
   input.style.height = 'auto';
   sendBtn.disabled = true;
   isStreaming = true;
 
   addMessage('user', text);
+
+  // Check if API is available
+  let apiAvailable = false;
+  try {
+    const healthCheck = await fetch(`http://${API_BASE}/health`, { signal: AbortSignal.timeout(2000) });
+    apiAvailable = healthCheck.ok;
+  } catch {}
+
+  if (!apiAvailable) {
+    // Fallback: try local calculation if we have items
+    status.className = 'status offline';
+    addMessage('ai', '⚠️ API 未连接。如需本地计算，请点击右下角 + 按钮添加商品。\n\n如需连接后端，请检查 API 地址设置。');
+    isStreaming = false;
+    sendBtn.disabled = false;
+    return;
+  }
+
+  status.className = 'status online';
   addLoading();
 
   try {
@@ -451,7 +1114,7 @@ async function send() {
       body: JSON.stringify({
         model: 'hermes-agent',
         messages: [
-          { role: 'system', content: '你是618购物助手。你必须加载并遵循 productivity/618-shopping-optimizer skill 的完整流程。用户输入商品名称、价格和平台后，按skill步骤：1)收集信息 2)确认规则 3)计算方案 4)输出结果。用中文回复，给出具体金额和详细计算过程。保持回复简洁但有实质内容。' },
+          { role: 'system', content: '你是618购物助手。你必须加载并遵循 productivity/618-shopping-optimizer skill 的完整流程。用户输入商品名称、价格和平台后，按skill步骤：1)收集信息 2)确认规则 3)计算方案 4)输出结果。用中文回复，给出具体金额和详细计算过程。保持回复简洁但有实质内容。在自然语言回复之后，必须追加一个 JSON 代码块供 Web UI 解析，格式见 skill 中的 Step 4。' },
           { role: 'user', content: text }
         ],
         stream: true
@@ -469,14 +1132,14 @@ async function send() {
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
-    
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      
+
       const chunk = decoder.decode(value, { stream: true });
       const lines = chunk.split('\n');
-      
+
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6).trim();
@@ -493,9 +1156,10 @@ async function send() {
         }
       }
     }
-    
+
     msgDiv.classList.remove('streaming');
-    
+    saveHistory();
+
   } catch (err) {
     removeLoading();
     toast('连接失败: ' + err.message);
@@ -507,13 +1171,54 @@ async function send() {
   }
 }
 
+// ============ UI Helpers ============
+function toggleSettings() {
+  document.getElementById('settingsModal').classList.toggle('active');
+}
+
+function saveSettings() {
+  API_BASE = apiHostInput.value.trim() || DEFAULT_HOST;
+  localStorage.setItem('618_api_host', API_BASE);
+  document.getElementById('settingsModal').classList.remove('active');
+  checkConnection();
+}
+
+function openAddModal() {
+  loadItems();
+  renderAddedItems();
+  updateItemCount();
+  document.getElementById('addModal').classList.add('active');
+  document.getElementById('itemName').focus();
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('active');
+}
+
+function switchTab(tab) {
+  const tabs = document.querySelectorAll('.tab-bar button');
+  tabs.forEach(t => t.classList.remove('active'));
+  if (tab === 'form') {
+    tabs[0].classList.add('active');
+    document.getElementById('tabForm').style.display = '';
+    document.getElementById('tabList').style.display = 'none';
+  } else {
+    tabs[1].classList.add('active');
+    document.getElementById('tabForm').style.display = 'none';
+    document.getElementById('tabList').style.display = '';
+    renderAddedItems();
+  }
+}
+
 // Auto-resize textarea
 input.addEventListener('input', () => {
   input.style.height = 'auto';
   input.style.height = Math.min(input.scrollHeight, 100) + 'px';
 });
 
-// Check connection on load
+// ============ Init ============
+loadItems();
+loadHistory();
 checkConnection();
 </script>
 </body>

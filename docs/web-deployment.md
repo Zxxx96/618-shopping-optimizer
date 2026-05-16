@@ -72,6 +72,22 @@ cd ~/.hermes/skills/productivity/618-shopping-optimizer/web
 python3 -m http.server 8080 --bind 0.0.0.0 &
 ```
 
+或者直接 `bash serve.sh`，端口会自动递增避免冲突。
+
+### 端口被占用
+`serve.sh` 已内置端口自动递增逻辑——如果 8080 被占用会自动尝试 8081、8082... 最多尝试 20 个端口。
+
+也可以手动指定：`PORT=9090 bash serve.sh`
+
+### 本地计算模式
+API 未连接时，网页仍可用本地计算功能：
+1. 点击右下角 + 按钮
+2. 添加商品（名称、价格、数量、平台）
+3. 选择满减规则
+4. 点击「开始计算」
+
+本地计算支持：补差凑单、分单优化、基础跨店满减。
+
 ### 两个服务都挂了
 先确认 gateway：`hermes gateway status`，如果没跑就 `hermes gateway run &`，再启动网页。
 

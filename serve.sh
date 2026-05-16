@@ -1,6 +1,6 @@
 #!/bin/bash
 # 618 Shopping Optimizer - Web Server Launcher
-# Starts the Hermes API server + serves the web frontend
+# Starts the web frontend (and checks for Hermes API server)
 
 set -e
 
@@ -8,6 +8,22 @@ PORT="${PORT:-8080}"
 API_PORT="${API_PORT:-8642}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 HTML_FILE="$SCRIPT_DIR/web/index.html"
+
+# Auto-increment port if occupied
+find_available_port() {
+  local port=$1
+  while lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; do
+    echo "  ⚠ 端口 $port 已被占用，尝试 $((port + 1))..." >&2
+    port=$((port + 1))
+    if [ $port -gt $(( $1 + 20 )) ]; then
+      echo "  ✗ 无法找到可用端口（已尝试 $1-$port）" >&2
+      exit 1
+    fi
+  done
+  echo $port
+}
+
+PORT=$(find_available_port $PORT)
 
 echo "========================================"
 echo "  618 购物助手 Web 版"
@@ -19,16 +35,16 @@ echo ""
 echo "  手机打开上面的地址就能用"
 echo "  按 Ctrl+C 停止"
 echo ""
-echo "  启动 API 服务器..."
-echo ""
 
 # Check if gateway is already running
 if curl -s http://localhost:$API_PORT/health > /dev/null 2>&1; then
   echo "  ✓ API 服务器已在运行 (端口 $API_PORT)"
 else
-  echo "  ⚠ API 服务器未运行，请先启动 Hermes gateway:"
+  echo "  ⚠ API 服务器未运行"
+  echo "  网页可用，但 AI 对话功能需要先启动 Hermes gateway:"
   echo "    hermes gateway run"
-  exit 1
+  echo ""
+  echo "  本地计算功能仍然可用（点击 + 按钮添加商品）"
 fi
 
 echo ""
