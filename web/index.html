@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>618 购物助手</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --red: #e4393c;
+    --red-dark: #c1272d;
+    --gold: #f5a623;
+    --bg: #f5f5f5;
+    --card: #fff;
+    --text: #333;
+    --text-secondary: #999;
+    --bubble-user: #e4393c;
+    --bubble-ai: #fff;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: #fff;
+    padding: 12px 16px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(228,57,60,0.3);
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .header .subtitle {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+  .header .badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+
+  /* Status bar */
+  .status {
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    gap: 6px;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4caf50;
+  }
+  .status.offline .status-dot { background: #ccc; }
+  .status.offline .status-text::after { content: " 未连接"; }
+
+  /* Chat area */
+  .chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Welcome card */
+  .welcome {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 16px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .welcome .icon { font-size: 48px; margin-bottom: 8px; }
+  .welcome h2 { font-size: 16px; color: var(--text); margin-bottom: 6px; }
+  .welcome p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .welcome .hint { font-size: 12px; color: var(--red); margin-top: 10px; font-weight: 500; }
+
+  /* Quick examples */
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+  }
+  .quick-btn {
+    background: #fff5f5;
+    border: 1px solid #ffcccc;
+    color: var(--red);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .quick-btn:active {
+    background: var(--red);
+    color: #fff;
+    transform: scale(0.96);
+  }
+
+  /* Message bubbles */
+  .msg {
+    max-width: 88%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    word-break: break-word;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .msg.user {
+    align-self: flex-end;
+    background: var(--bubble-user);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.ai {
+    align-self: flex-start;
+    background: var(--bubble-ai);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+    box-shadow: var(--shadow);
+    white-space: pre-wrap;
+  }
+  .msg.ai.streaming { border-left: 3px solid var(--red); }
+
+  .msg .label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .msg.user .label { color: rgba(255,255,255,0.7); }
+
+  /* Input area */
+  .input-area {
+    padding: 10px 12px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    z-index: 10;
+  }
+  .input-area textarea {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    max-height: 100px;
+    transition: border-color 0.2s;
+  }
+  .input-area textarea:focus { border-color: var(--red); }
+  .input-area button {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: var(--red);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .input-area button:active { transform: scale(0.9); }
+  .input-area button:disabled { background: #ccc; }
+
+  /* Loading dots */
+  .loading {
+    align-self: flex-start;
+    padding: 12px 16px;
+    display: flex;
+    gap: 4px;
+  }
+  .loading span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: bounce 1.4s infinite ease-in-out;
+  }
+  .loading span:nth-child(2) { animation-delay: 0.2s; }
+  .loading span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    z-index: 100;
+    animation: slideDown 0.3s ease;
+    pointer-events: none;
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+
+  /* Settings button */
+  .settings-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .modal h3 { font-size: 16px; margin-bottom: 12px; }
+  .modal label { font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  .modal input {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    outline: none;
+  }
+  .modal input:focus { border-color: var(--red); }
+  .modal button {
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎯 618 购物助手 <span class="badge">AI</span></h1>
+  <div class="subtitle">智能凑单 · 最优省钱</div>
+  <button class="settings-btn" onclick="toggleSettings()">⚙</button>
+</div>
+
+<div class="status" id="status">
+  <span class="status-dot"></span>
+  <span class="status-text">已连接</span>
+</div>
+
+<div class="chat" id="chat">
+  <div class="welcome">
+    <div class="icon">🛒</div>
+    <h2>618 智能购物助手</h2>
+    <p>告诉我你想买什么，我帮你算出最优凑单方案。<br>支持京东、淘宝、拼多多、抖音平台规则。</p>
+    <p class="hint">👇 或者试试这些 →</p>
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="quickSend('我想在淘宝买键盘、鼠标和显示器，预算2000，帮我搭配最优方案')">淘宝数码凑单</button>
+      <button class="quick-btn" onclick="quickSend('京东618满减规则是什么？')">查京东规则</button>
+      <button class="quick-btn" onclick="quickSend('我有三件东西要买：耳机498、键盘899、鼠标299，淘宝跨店满减怎么拆单最省钱？')">跨店拆单计算</button>
+    </div>
+  </div>
+</div>
+
+<div class="input-area">
+  <textarea id="input" rows="1" placeholder="输入你想买的商品和价格..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send();}"></textarea>
+  <button onclick="send()" id="sendBtn">➤</button>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>连接设置</h3>
+    <label>API 服务器地址</label>
+    <input id="apiHost" placeholder="192.168.x.x:8642">
+    <button onclick="saveSettings()">保存</button>
+  </div>
+</div>
+
+<script>
+const DEFAULT_HOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'localhost:8642'
+  : window.location.hostname + ':8642';
+
+let API_BASE = localStorage.getItem('618_api_host') || DEFAULT_HOST;
+let isStreaming = false;
+let streamBuffer = '';
+
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('sendBtn');
+const status = document.getElementById('status');
+const apiHostInput = document.getElementById('apiHost');
+
+apiHostInput.value = API_BASE;
+
+function toggleSettings() {
+  document.getElementById('settingsModal').classList.toggle('active');
+}
+
+function saveSettings() {
+  API_BASE = apiHostInput.value.trim() || DEFAULT_HOST;
+  localStorage.setItem('618_api_host', API_BASE);
+  document.getElementById('settingsModal').classList.remove('active');
+  checkConnection();
+}
+
+async function checkConnection() {
+  try {
+    const res = await fetch(`http://${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      status.className = 'status';
+      status.querySelector('.status-text').textContent = '已连接';
+    }
+  } catch {
+    status.className = 'status offline';
+    status.querySelector('.status-text').textContent = '未连接';
+  }
+}
+
+function quickSend(text) {
+  input.value = text;
+  send();
+}
+
+function addMessage(role, text, streaming = false) {
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  if (streaming) div.classList.add('streaming');
+  const label = role === 'user' ? '你' : '购物助手';
+  div.innerHTML = `<div class="label">${label}</div>${escapeHtml(text)}`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function addLoading() {
+  const div = document.createElement('div');
+  div.className = 'loading';
+  div.id = 'loading';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function removeLoading() {
+  const el = document.getElementById('loading');
+  if (el) el.remove();
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+async function send() {
+  const text = input.value.trim();
+  if (!text || isStreaming) return;
+  
+  input.value = '';
+  input.style.height = 'auto';
+  sendBtn.disabled = true;
+  isStreaming = true;
+
+  addMessage('user', text);
+  addLoading();
+
+  try {
+    const res = await fetch(`http://${API_BASE}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'hermes-agent',
+        messages: [
+          { role: 'system', content: '你是618购物助手。你必须加载并遵循 productivity/618-shopping-optimizer skill 的完整流程。用户输入商品名称、价格和平台后，按skill步骤：1)收集信息 2)确认规则 3)计算方案 4)输出结果。用中文回复，给出具体金额和详细计算过程。保持回复简洁但有实质内容。' },
+          { role: 'user', content: text }
+        ],
+        stream: true
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`HTTP ${res.status}: ${err}`);
+    }
+
+    removeLoading();
+    const msgDiv = addMessage('ai', '', true);
+    streamBuffer = '';
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const json = JSON.parse(data);
+            const delta = json.choices?.[0]?.delta?.content;
+            if (delta) {
+              streamBuffer += delta;
+              msgDiv.innerHTML = `<div class="label">购物助手</div>${escapeHtml(streamBuffer)}`;
+              chat.scrollTop = chat.scrollHeight;
+            }
+          } catch {}
+        }
+      }
+    }
+    
+    msgDiv.classList.remove('streaming');
+    
+  } catch (err) {
+    removeLoading();
+    toast('连接失败: ' + err.message);
+    console.error(err);
+  } finally {
+    isStreaming = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+// Auto-resize textarea
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+});
+
+// Check connection on load
+checkConnection();
+</script>
+</body>
+</html>
